@@ -1,17 +1,15 @@
-function [target_update,individual_eaten] = compute_target_update()
+function [target_update] = compute_target_update()
 
-global targets indices_foragers N L;
+global targets indices_foragers;
 
-target_update = zeros(L);
-individual_eaten = zeros(N,1);
-for n = 1:N
-    if targets(indices_foragers(n,1),indices_foragers(n,2)) >= 1
-        target_update(indices_foragers(n,1),indices_foragers(n,2)) = -1;
-        individual_eaten(n) = 1;
-    else
-        target_update(indices_foragers(n,1),indices_foragers(n,2)) = 0;
-        individual_eaten(n) = 0;
-    end
-    
-end
+target_occupation = zeros(size(targets));
+target_occupation(targets > 0) = 1;
+
+worm_occupation = zeros(size(targets));
+worm_occupation(sub2ind(size(targets), indices_foragers(:, 1), indices_foragers(:, 2))) = 1;
+
+target_update = zeros(size(targets));
+
+target_update((target_occupation.*worm_occupation) > 0) = -1;
+
 end

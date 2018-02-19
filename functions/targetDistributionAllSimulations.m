@@ -24,7 +24,7 @@ for ii = 1:allSimulations
             end
 
             %choose existing target as basis
-            basis = randi(n-1,1,1);
+            basis = randi(n-1);
 
             %compute direction of update
             direction = 2*pi*rand(1);
