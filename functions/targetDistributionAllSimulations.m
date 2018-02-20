@@ -18,8 +18,8 @@ for ii = 1:allSimulations
       r_in = logical(r_ < (1/(L/sqrt(2)))^gamma);
       
       d = zeros(size(r_));
-      d(r_in) = 1 + r_.*((L/sqrt(2))-1);
-      d(~r_in) = r_.^(1-gamma);
+      d(r_in) = 1 + r_(r_in).*((L/sqrt(2))-1);
+      d(~r_in) = r_(~r_in).^(1-gamma);
       
       direction = rand(size(r_))*2*pi;
       update = zeros(size(r_, 1), 2);
@@ -39,17 +39,16 @@ for ii = 1:allSimulations
           basis = randi(n-1);
 
           %compute direction of update
-          direction = 2*pi*rand(1);
-          update(1,1) = round(-(d * sin(direction)));
-          update(1,2) = round(d * cos(direction));
-          new_position = index(basis,:) + update(1,:);
+          new_position = index(basis,:) + update(n,:);
           new_position(new_position > L) = new_position(new_position > L) - L;
           new_position(new_position < 1) = new_position(new_position < 1) + L;
           index(n,:) = new_position;
-          %update target matrix
-          target(index(n,1),index(n,2)) = target(index(n,1),index(n,2)) + 1;
       end
-    target(index(1,1),index(1,2)) = target(index(1,1),index(1,2)) + 1;
+%      index(index > L) = index(index > L) - L;
+%      index(index < 1) = index(index < 1) + L;
+
+      sp_target = sparse(index(:, 1), index(:, 2), ones(1, size(index, 1)), L, L);
+      target = full(sp_target);
     
     %save target distribution in 3D matrix
     allDistributions(:,:,ii) = target;
