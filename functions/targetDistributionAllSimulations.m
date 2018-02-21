@@ -15,11 +15,22 @@ for ii = 1:allSimulations
       index = randi(L, initialNumberTargets * L^2, 2);
     else
       r_ = rand(size(index, 1), 1);
-      r_in = logical(r_ < (1/(L/sqrt(2)))^gamma);
+      
+      % precompute threshold to switch between the two given strategies to 
+      % compute the initial target distributions
+      threshold = 1.0 / ((L/sqrt(2))^gamma);
+      
+      % shift and scale parameters for the target positioning strategy
+      % that uses a random value between [1..L/sqrt(2)]
+      shift = 1.0;
+      scale = (L/sqrt(2)) - 1;
+      
+      % mask for all values that receive an update in the range [1..L/sqrt(2)]
+      r_in = logical(r_ < threshold);
       
       d = zeros(size(r_));
-      d(r_in) = 1 + r_(r_in).*((L/sqrt(2))-1);
-      d(~r_in) = r_(~r_in).^(1-gamma);
+      d(r_in) = r_(r_in).*scale + shift;
+      d(~r_in) = r_(~r_in).^(-1.0/gamma);
       
       direction = rand(size(r_))*2*pi;
       update = zeros(size(r_, 1), 2);
@@ -42,14 +53,16 @@ for ii = 1:allSimulations
           new_position = index(basis,:) + update(n,:);
           new_position(new_position > L) = new_position(new_position > L) - L;
           new_position(new_position < 1) = new_position(new_position < 1) + L;
+
           index(n,:) = new_position;
       end
-%      index(index > L) = index(index > L) - L;
-%      index(index < 1) = index(index < 1) + L;
 
+      % 'abuse' behaviour of sparse() to accumulate target counter on surface
       sp_target = sparse(index(:, 1), index(:, 2), ones(1, size(index, 1)), L, L);
       target = full(sp_target);
-    
+      
+      %imshow(target, colormap("cold"));
+      
     %save target distribution in 3D matrix
     allDistributions(:,:,ii) = target;
 end
