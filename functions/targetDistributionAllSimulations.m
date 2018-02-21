@@ -1,6 +1,6 @@
-function allDistributions = targetDistributionAllSimulations(initialNumberTargets,allSimulations)
+function allDistributions = targetDistributionAllSimulations(initialNumberTargets,allSimulations,gamma)
 
-global gamma L;
+global L;
 
 allDistributions = zeros(L,L,allSimulations);
 for ii = 1:allSimulations

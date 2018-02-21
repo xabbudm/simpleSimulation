@@ -1,30 +1,34 @@
-function [motionUpdate,stepTaken] = compute_motion_update(speedOnFood,speedOffFood)
+function [motionUpdate,stepTaken] = compute_motion_update(speedOnFood,speedOffFood,foragers,targets)
 
-global N indices_foragers;
+global N;
 
+%create matrix containing motion updates of all worms
 motionUpdate = zeros(N,2);
-updateIndices = indices_foragers;
 
-%mix update indices for randomness
-mixingVector = randperm(size(updateIndices,1));
-updateIndices = updateIndices(mixingVector(:),:);
-foragerIndices = updateIndices;
-%create a vector fo step length of the step every foragers has taken
+%mix update indices for random order of updating to avoid bias
+mixingVector = randperm(size(foragers,1));
+indicesInput = foragers(mixingVector(:),:);
+indicesBeforeUpdate = indicesInput;
+
+%create a vector containing length of the steps worms have taken
 stepTaken = zeros(N,1);
 
 for n = 1:N
-    targetsEnvironment = compute_surrounding_targets(n,foragerIndices);
-    foragersSurrounding = compute_surrounding_foragers(n,foragerIndices);
+    
+    %compute number of targets in direct neighbourhood of worm and its
+    %current position and determine if it has direct neighbours
+    targetsEnvironment = compute_surrounding_targets(n,indicesBeforeUpdate,targets);
+    foragersSurrounding = compute_surrounding_foragers(n,indicesBeforeUpdate);
     
     if sum(targetsEnvironment) == 0 
-        [motionUpdate(n,:),updateIndices] = random_step(updateIndices,n,speedOffFood);
+        [motionUpdate(n,:),indicesInput] = random_step(indicesInput,n,speedOffFood);
         stepTaken(n) = max(abs(motionUpdate(n,:)));
     
     elseif sum(foragersSurrounding) == 0
-        [motionUpdate(n,:),updateIndices] = random_step(updateIndices,n,speedOnFood);
+        [motionUpdate(n,:),indicesInput] = random_step(indicesInput,n,speedOnFood);
         stepTaken(n) = max(abs(motionUpdate(n,:)));
     else
-        [motionUpdate(n,:),updateIndices] = targeted_step(n,foragersSurrounding,updateIndices);
+        [motionUpdate(n,:),indicesInput] = targeted_step(n,foragersSurrounding,indicesInput);
         stepTaken(n) = max(abs(motionUpdate(n,:)));
     end
 end

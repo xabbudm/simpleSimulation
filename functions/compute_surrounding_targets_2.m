@@ -1,9 +1,9 @@
 %includes targets at position of respective worm
-function surroundingTargets = compute_surrounding_targets_2(n,foragerIndices)
+function surroundingTargets = compute_surrounding_targets_2(n,indicesBeforeUpdate)
 
 global targets_2 L;
 
-index = foragerIndices(n,:);
+index = indicesBeforeUpdate(n,:);
 surrounding = [-1 -1; -1 0; -1 1; 0 1; 1 1; 1 0; 1 -1; 0 -1; 0 0];
 indicesSurrounding = index + surrounding;
 
