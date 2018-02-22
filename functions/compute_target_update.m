@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function [target_update, targets_eaten] = compute_target_update()
 
 global targets indices_foragers;
@@ -10,6 +11,17 @@ target_occupation(targets > 0) = 1;
 forager_occupation = zeros(size(targets));
 idx = sub2ind(size(targets), indices_foragers(:, 1), indices_foragers(:, 2));
 forager_occupation(idx) = 1;
+=======
+function [target_update,targetsEatenPerWorm] = compute_target_update(targets,foragers)
+
+%compute matrix that gives information at which positions one food unit is
+%eaten
+target_occupation = zeros(size(targets));
+target_occupation(targets > 0) = 1;
+
+worm_occupation = zeros(size(targets));
+worm_occupation(sub2ind(size(targets), foragers(:, 1), foragers(:, 2))) = 1;
+>>>>>>> origin/master
 
 % elementwise multiplication gives a 1 where target and forager correspond
 % and a 0 otherwise
@@ -22,5 +34,8 @@ targets_eaten(:) = target_update(idx);
 
 target_update = target_update* (-1);
 
+
+%compute number of food units each worm eats
+targetsEatenPerWorm = diag(targets(foragers(:,1),foragers(:,2))) > 0;
 
 end
