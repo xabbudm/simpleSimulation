@@ -9,7 +9,7 @@ global L N;
 gamma = 3;
 L = 35;
 N = 40;
-time = 2200;
+time = 500;
 numberSimulations = 5;
 initialNumberTargets = 10;
 initialForagers = foragerDistributionAllSimulations(numberSimulations);
@@ -29,7 +29,7 @@ for loop = 1:numberSimulations
 
     foragers = initialForagers(:,:,loop);
     targets = initialTargets(:,:,loop);
-
+    measurements = zeros(1, time);
     for t = 1:time
         
         %Step 1: Compute the eaten targets at the current positions of the
@@ -39,8 +39,11 @@ for loop = 1:numberSimulations
        
         %Step 2: Determine motion update of the foragers and save the average
         %surrounding foragers
+        tStart = tic;
         [motionUpdate,allSteps(:,t,loop)] = compute_motion_update(speedOnFood,speedOffFood,foragers,targets);
 
+        tSpan = toc(tStart);
+        measurements(t) = tSpan;
         %Step 3: Update the position of the foragers
         foragers = foragers + motionUpdate;
         foragers(foragers > L) = foragers(foragers > L) - L;
@@ -51,6 +54,8 @@ for loop = 1:numberSimulations
         saveTargets(:,:,t) = targets;
     end
 
+    message = sprintf('Avg time motion update %f - min: %f - max: %f', mean(measurements), min(measurements), max(measurements));
+    disp(message)
     %Step 1: Calculate remaining targets and time when everything has been eaten
     remainingTargets(loop,:) = reshape(sum(sum(saveTargets)),[1,time]);
     zeroTargets = find(remainingTargets(loop,:) < round(sum(sum(initialTargets)) * 0.1));
