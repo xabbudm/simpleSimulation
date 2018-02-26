@@ -9,7 +9,7 @@ global L N;
 gamma = 3;
 L = 35;
 N = 40;
-time = 500;
+time = 100;
 numberSimulations = 5;
 initialNumberTargets = 10;
 initialForagers = foragerDistributionAllSimulations(numberSimulations);
