@@ -3,3 +3,4 @@
 functions/data/**
 functions/octave-workspace
 **.m~
+*.rej
