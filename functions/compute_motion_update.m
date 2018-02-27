@@ -13,27 +13,18 @@ indicesBeforeUpdate = indicesInput;
 %create a vector containing length of the steps worms have taken
 stepTaken = zeros(N,1);
 
-pbcTargets = zeros(L +2);
-
-pbcTargets(2:L+1, 2:L+1) = targets;
-
-% copy borders to fullfill periodic boundary condition
-pbcTargets(1, 2:L+1) = targets(L, :);
-pbcTargets(L+2, 2:L+1) = targets(1, :);
-pbcTargets(2:L+1, 1) = targets(:, L);
-pbcTargets(2:L+1, L+2) = targets(:, 1);
-pbcTargets(1, 1) = targets(L,L);
-pbcTargets(1, L+2) = targets(L, 1);
-pbcTargets(L+2, 1) = targets(1, L);
-pbcTargets(L+2, L+2) = targets(1, 1);
-
+% precompute slightly larger targets matrix that already fullfils the
+% periodic boundary condition by copying data into the additional rows/cols 
+% from their opposite rows/cols
+pbcTargets = create_periodic_boundary_condition(targets);
+pbcForagers = create_periodic_boundary_condition(foragers);
 
 for n = 1:N
     
     %compute number of targets in direct neighbourhood of worm and its
     %current position and determine if it has direct neighbours
     targetsEnvironment = compute_surrounding_targets(n,indicesBeforeUpdate,pbcTargets);
-    foragersSurrounding = compute_surrounding_foragers(n,indicesBeforeUpdate);
+    foragersSurrounding = compute_surrounding_foragers(n,indicesBeforeUpdate, pbcForagers);
     
     if sum(targetsEnvironment) == 0 
         [motionUpdate(n,:),indicesInput] = random_step(indicesInput,n,speedOffFood);
