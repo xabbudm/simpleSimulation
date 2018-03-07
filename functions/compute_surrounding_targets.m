@@ -1,4 +1,4 @@
-function surroundingTargets = compute_surrounding_targets(n,indicesBeforeUpdate,targets)
+  function surroundingTargets = compute_surrounding_targets(n,indicesBeforeUpdate,targets)
 
   global L;
   %compute indices of matrix fields in the direct neighbourhood of worm and

@@ -23,8 +23,8 @@ for n = 1:N
     
     %compute number of targets in direct neighbourhood of worm and its
     %current position and determine if it has direct neighbours
-    targetsEnvironment = compute_surrounding_targets(n,indicesBeforeUpdate,pbcTargets);
-    foragersSurrounding = compute_surrounding_foragers(n,indicesBeforeUpdate, pbcForagers);
+    targetsEnvironment = compute_neighbourhood_count(n,indicesBeforeUpdate,pbcTargets, true);
+    foragersSurrounding = compute_surrounding_foragers(n,indicesBeforeUpdate, pbcForagers, false);
     
     if sum(targetsEnvironment) == 0 
         [motionUpdate(n,:),indicesInput] = random_step(indicesInput,n,speedOffFood);
